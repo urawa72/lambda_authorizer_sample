@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import re
-from typing import Dict, Optional
+from typing import Dict, Optional, Mapping
 from urllib.request import urlopen
 
 from jose import jwt
@@ -44,7 +44,7 @@ def verify(event: Dict) -> Optional[Dict]:
         return generate_policy('*', 'Allow', resource, payload)
     except Exception as error:
         logger.error(error)
-        return generate_policy('*', 'Deny', resource, None)
+        return generate_policy('*', 'Deny', resource, {})
 
 
 def get_token(event: Dict) -> str:
@@ -69,7 +69,7 @@ def get_rsa_key(token: str) -> Optional[Dict]:
 
 
 def generate_policy(
-        principal_id: str, effect: str, resource: str, payload: Optional[Dict]
+        principal_id: str, effect: str, resource: str, payload: Mapping
         ) -> Dict:
     policy = {
         'principalId': principal_id,

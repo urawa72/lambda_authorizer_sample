@@ -15,10 +15,6 @@ def lambda_handler(event, context):
     logger.debug(claims)
     logger.debug(json.dumps(claims))
 
-    dummy_data = [{
-        'test': 'hello world'
-    }]
-
     return {
         'statusCode': 200,
         'headers': {
@@ -27,5 +23,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Methods': '*',
             # 'Access-Control-Allow-Credentials': 'true',
         },
-        'body': json.dumps({'result': dummy_data})
+        'body': json.dumps({'result': 'hello world!'})
     }
