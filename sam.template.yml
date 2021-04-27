@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Authorizer Test
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Timeout: 5
+    Environment:
+      Variables:
+        PYTHONPATH: /var/runtime:/var/task/libs
+
+Parameters:
+  Auth0Domain:
+    Type: String
+    Description: Auth0 domain
+  Auth0Audience:
+    Type: String
+    Description: Auth0 audience
+
+Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    EndpointConfiguration: REGIONAL
+    Properties:
+      StageName: Dev
+      EndpointConfiguration: REGIONAL
+      Auth:
+        DefaultAuthorizer: MyLambdaTokenAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          MyLambdaTokenAuthorizer:
+            FunctionArn: !GetAtt Authorizer.Arn
+            Identity:
+              Header: 'Authorization'
+              ValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+              ReauthorizeEvery: 0
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+        # AllowCredentials: True
+
+  Hello:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: hello.lambda_handler
+      Runtime: python3.8
+      Tracing: Active
+      Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /hello
+            Method: get
+
+  Authorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: authorizer.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          AUTH0_DOMAIN: !Sub ${Auth0Domain}
+          AUTH0_AUDIENCE: !Sub ${Auth0Audience}
