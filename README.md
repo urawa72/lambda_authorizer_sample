@@ -7,6 +7,5 @@ $ python -m venv .venv
 $ make install
 
 # use AWS SAM for provisioning
-$ make build
 $ make deploy
 ```

@@ -6,6 +6,8 @@ Globals:
   Function:
     Runtime: python3.8
     Timeout: 5
+    AutoPublishAlias: dev
+    Tracing: Active
     Environment:
       Variables:
         PYTHONPATH: /var/runtime:/var/task/libs
@@ -47,7 +49,6 @@ Resources:
       CodeUri: src/
       Handler: hello.lambda_handler
       Runtime: python3.8
-      Tracing: Active
       Events:
         GetRoot:
           Type: Api

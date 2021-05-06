@@ -1,12 +1,13 @@
 import base64
 import json
 import logging
+from typing import Dict
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: Dict, context: Dict) -> Dict:
     logger.debug(event)
 
     claims = event['requestContext']['authorizer']['claims']
